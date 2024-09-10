@@ -45,6 +45,8 @@ model Censo_clientes {
 model Devoluciones {
   id       Int            @id @default(autoincrement())
   fecha    DateTime
+  cantidad Int
+  Kg       Int
   censo    Censo_clientes @relation(fields: [fk_censo], references: [id])
   fk_censo Int
 }
