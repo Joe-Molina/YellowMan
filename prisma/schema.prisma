@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,35 +8,34 @@ datasource db {
 }
 
 model Clientes {
-  id       Int                  @id @default(autoincrement())
-  nombre   String
-  punto    String
-  bombonas Bombonas_asignadas[]
-  censos   Censo_clientes[]
+  id               Int                @id @default(autoincrement())
+  nombre           String
+  punto            String
+  censos           Censo_clientes[]
+  Precios_bombonas Precios_bombonas[]
 }
 
 model Precios_bombonas {
-  id       Int                  @id @default(autoincrement())
-  kg       Int
-  precio   Int
-  bombonas Bombonas_asignadas[]
-}
-
-model Bombonas_asignadas {
-  id         Int              @id @default(autoincrement())
-  cliente    Clientes         @relation(fields: [fk_cliente], references: [id])
+  id         Int      @id @default(autoincrement())
+  cliente    Clientes @relation(fields: [fk_cliente], references: [id])
   fk_cliente Int
-  precios    Precios_bombonas @relation(fields: [fk_bombona], references: [id])
-  fk_bombona Int
+  kg10       Int
+  kg18       Int
+  kg27       Int
+  kg43       Int
 }
 
 model Censo_clientes {
-  id             Int              @id @default(autoincrement())
-  fecha          DateTime
-  cliente        Clientes         @relation(fields: [fk_cliente], references: [id])
-  fk_cliente     Int
-  devoluciones   Devoluciones[]
-  facturas_censo Facturas_censo[]
+  id           Int            @id @default(autoincrement())
+  fecha        DateTime
+  fk_cliente   Int
+  cant_5kg     Int
+  cant_10kg    Int
+  cant_18kg    Int
+  cant_27kg    Int
+  cant_43kg    Int
+  cliente      Clientes       @relation(fields: [fk_cliente], references: [id])
+  devoluciones Devoluciones[]
 }
 
 model Devoluciones {
@@ -47,51 +43,37 @@ model Devoluciones {
   fecha    DateTime
   cantidad Int
   Kg       Int
-  censo    Censo_clientes @relation(fields: [fk_censo], references: [id])
   fk_censo Int
-}
-
-model Facturas_censo {
-  id               Int              @id @default(autoincrement())
-  fecha            DateTime
-  monto_en_divisas Int
-  censo            Censo_clientes   @relation(fields: [fk_censo], references: [id])
-  fk_censo         Int
-  cant_5kg         Int
-  cant_10kg        Int
-  cant_18kg        Int
-  cant_21kg        Int
-  cant_27kg        Int
-  cant_43kg        Int
-  pagos_clientes   Pagos_clientes[]
+  censo    Censo_clientes @relation(fields: [fk_censo], references: [id])
 }
 
 model Facturas_corigas {
-  id               Int              @id @default(autoincrement())
+  id               Int                     @id @default(autoincrement())
   fecha            DateTime
   monto_en_divisas Int
   cant_5kg         Int
   cant_10kg        Int
   cant_18kg        Int
-  cant_21kg        Int
   cant_27kg        Int
   cant_43kg        Int
-  pagos_corigas    Pagos_corigas[]
-  Pagos_clientes   Pagos_clientes[]
+  pagos_corigas    Pagos_factura_corigas[]
 }
 
-model Pagos_corigas {
+model Pagos_factura_corigas {
   id                 Int              @id @default(autoincrement())
-  factura_corigas    Facturas_corigas @relation(fields: [fk_factura_corigas], references: [id])
   fk_factura_corigas Int
+  monto_Pagado       Int
+  dolarBcv           Int
+  factura_corigas    Facturas_corigas @relation(fields: [fk_factura_corigas], references: [id])
 }
 
 model Pagos_clientes {
-  id               Int              @id @default(autoincrement())
-  factura_censo    Facturas_corigas @relation(fields: [fk_factura_censo], references: [id])
-  fk_factura_censo Int
-  Facturas_censo   Facturas_censo?  @relation(fields: [facturas_censoId], references: [id])
-  facturas_censoId Int?
+  id               Int      @id @default(autoincrement())
+  facturas_censoId Int
+  total_divisa     Int
+  dolarBcv         Int
+  monto_pagado     Int
+  fecha_pago       DateTime
 }
 
 model Gastos_empresa {
