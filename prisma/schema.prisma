@@ -7,38 +7,40 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Clientes {
-  id               Int                @id @default(autoincrement())
-  nombre           String
-  punto            String
-  censos           Censo_clientes[]
-  Precios_bombonas Precios_bombonas[]
+model Precios_bombonas {
+  id       Int        @id @default(autoincrement())
+  kg5      Float
+  kg10     Float
+  kg18     Float
+  kg27     Float
+  kg43     Float
+  Clientes Clientes[]
 }
 
-model Precios_bombonas {
-  id         Int      @id @default(autoincrement())
-  cliente    Clientes @relation(fields: [fk_cliente], references: [id])
-  fk_cliente Int
-  kg10       Int
-  kg18       Int
-  kg27       Int
-  kg43       Int
+model Clientes {
+  id               Int              @id @default(autoincrement())
+  nombre           String
+  punto            String
+  precios_venta    Precios_bombonas @relation(fields: [fk_precios_venta], references: [id])
+  fk_precios_venta Int
+  Censo_clientes   Censo_clientes[]
 }
 
 model Censo_clientes {
-  id           Int            @id @default(autoincrement())
-  fecha        DateTime
-  fk_cliente   Int
-  cant_5kg     Int
-  cant_10kg    Int
-  cant_18kg    Int
-  cant_27kg    Int
-  cant_43kg    Int
-  cliente      Clientes       @relation(fields: [fk_cliente], references: [id])
-  devoluciones Devoluciones[]
+  id                    Int                     @id @default(autoincrement())
+  fecha                 DateTime
+  cant_5kg              Int
+  cant_10kg             Int
+  cant_18kg             Int
+  cant_27kg             Int
+  cant_43kg             Int
+  cliente               Clientes                @relation(fields: [fk_cliente], references: [id])
+  fk_cliente            Int
+  Devoluciones_dinero   Devoluciones_dinero[]
+  Devoluciones_bombonas Devoluciones_bombonas[]
 }
 
-model Devoluciones {
+model Devoluciones_bombonas {
   id       Int            @id @default(autoincrement())
   fecha    DateTime
   cantidad Int
@@ -47,33 +49,46 @@ model Devoluciones {
   censo    Censo_clientes @relation(fields: [fk_censo], references: [id])
 }
 
-model Facturas_corigas {
-  id               Int                     @id @default(autoincrement())
+model Devoluciones_dinero {
+  id               Int            @id @default(autoincrement())
   fecha            DateTime
-  monto_en_divisas Int
+  cant_devuelta_Bs Float
+  Kg               Int
+  fk_censo         Int
+  censo            Censo_clientes @relation(fields: [fk_censo], references: [id])
+}
+
+model Pagos_clientes {
+  id                Int      @id @default(autoincrement())
+  fk_censo_clientes Int
+  tasa_bcv          Float
+  pago_divisa       Float
+  pago_efectivo     Float
+  pago_pm           Float
+  total_pagado      Float
+  fecha_pago        DateTime
+}
+
+model Censo_corigas {
+  id               Int      @id @default(autoincrement())
+  fecha            DateTime
+  total_en_divisas Float
   cant_5kg         Int
   cant_10kg        Int
   cant_18kg        Int
   cant_27kg        Int
   cant_43kg        Int
-  pagos_corigas    Pagos_factura_corigas[]
+
+  Pagos_censo_corigas Pagos_censo_corigas[]
 }
 
-model Pagos_factura_corigas {
-  id                 Int              @id @default(autoincrement())
-  fk_factura_corigas Int
-  monto_Pagado       Int
-  dolarBcv           Int
-  factura_corigas    Facturas_corigas @relation(fields: [fk_factura_corigas], references: [id])
-}
-
-model Pagos_clientes {
-  id               Int      @id @default(autoincrement())
-  facturas_censoId Int
-  total_divisa     Int
-  dolarBcv         Int
-  monto_pagado     Int
-  fecha_pago       DateTime
+model Pagos_censo_corigas {
+  id                    Int           @id @default(autoincrement())
+  censo_corigas         Censo_corigas @relation(fields: [fk_censo_corigas], references: [id])
+  fk_censo_corigas      Int
+  pagado_en_pm          Float
+  equivalente_en_divisa Float
+  tasa_bcv              Float
 }
 
 model Gastos_empresa {

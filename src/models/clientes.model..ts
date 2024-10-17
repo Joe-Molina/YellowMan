@@ -4,7 +4,7 @@ import { Client } from "../types";
 // comprobar si el async y el await son necesarios en esta funcion puesto q los llamare en otra donde tambien tengo que usar async y await
 
 export class ClientsModel {
-  static getAllClients = async () => prisma.clientes.findMany();
+  static getAllClients = async () => await prisma.clientes.findMany()
 
   static getClient = async (id: number) => {
     const client = prisma.clientes.findFirst({
@@ -20,6 +20,7 @@ export class ClientsModel {
       data: {
         nombre: newClient.nombre,
         punto: newClient.punto,
+        fk_precios_venta: newClient.fk_precios_venta
       },
     });
 

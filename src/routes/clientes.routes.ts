@@ -7,8 +7,8 @@ router.get("/", Clients.getAll);
 
 router.get("/:id", Clients.getOne);
 
-router.post("/");
+router.post("/", Clients.add);
 
-router.delete("/:id");
+router.delete("/:id", Clients.delete);
 
 export default router;

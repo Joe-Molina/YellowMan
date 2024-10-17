@@ -2,10 +2,14 @@ import { ClientsModel } from "../models/clientes.model.";
 
 export class Clients {
   static async getAll(_req: any, res: any) {
-    const clientes = ClientsModel.getAllClients;
-    return clientes != null && clientes.length > 0
-      ? res.json(clientes)
-      : res.sendStatus(404);
+    try {
+      const clientes = await ClientsModel.getAllClients();
+
+      console.log(clientes)
+      res.json(clientes)
+    } catch (error) {
+      res.status(404).send(error);
+    }
   }
 
   static async getOne(req: any, res: any) {
@@ -15,6 +19,7 @@ export class Clients {
   }
 
   static async add(req: any, res: any) {
+
     const newClient = await ClientsModel.addClient(req.body);
 
     return newClient != null ? res.json(newClient) : res.sendStatus(404);
